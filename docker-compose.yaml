@@ -1,0 +1,40 @@
+version: "3.3"
+services:
+  customer:
+    build:
+        context: Customer
+        dockerfile: DockerFile
+    ports:
+        - 8081:8080
+    environment:
+        - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+        - rabbitmq
+  item:
+    build:
+        context: Item
+        dockerfile: DockerFile
+    ports:
+        - 8082:8080
+    environment:
+        - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+        - rabbitmq
+        - itemDB
+  rabbitmq:
+      image: rabbitmq:3-management
+      container_name: rabbitmq
+      restart: always
+      ports:
+        - 15672:15672
+        - 5672:5672
+  itemDB:
+    image: blacklabelops/hsqldb
+    ports:
+        - 9001:9001
+    environment:
+        - HSQLDB_USER=sa
+        - HSQLDB_PASSWORD=password
+        - HSQLDB_DATABASE_NAME=testdb
+    
+    
